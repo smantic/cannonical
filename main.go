@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/smantic/cannonical/cmd"
+	"github.com/smantic/cannonical/cmd/serve"
 )
 
 func init() {
@@ -14,8 +15,6 @@ func init() {
 	flag.Usage = func() {
 		fmt.Printf(cmd.HelpStr)
 	}
-
-	flag.Parse()
 }
 
 func main() {
@@ -32,5 +31,10 @@ func main() {
 	case "list":
 		fmt.Printf(cmd.CommandStr)
 		return
+	// serve an http server
+	case "serve":
+		serve.Run(os.Args[2:])
 	}
+
+	flag.Parse()
 }
