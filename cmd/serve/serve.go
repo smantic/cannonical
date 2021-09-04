@@ -21,8 +21,10 @@ func Run(args []string) {
 	flags.StringVar(&c.Port, "port", "8080", "port to run the server on")
 	flags.Parse(args)
 
+	s := server.NewServer(c)
+
 	log.Printf("http server running on %s:%s...\n", c.Addr, c.Port)
-	err := server.Serve(c)
+	err := s.Run()
 	if err != nil {
 		log.Printf("failed to run http server: %s\n", err.Error())
 		return
