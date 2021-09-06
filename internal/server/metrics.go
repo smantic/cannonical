@@ -2,8 +2,10 @@ package server
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -25,12 +27,20 @@ func NewPromMiddleware() PromMiddleware {
 	}
 }
 
-func (m *PromMiddleware) CountRequest(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func (m *PromMiddleware) RecordRequest(h http.Handler) http.Handler {
+
+	f := func(w http.ResponseWriter, r *http.Request) {
+
+		wr := middleware.NewWrapResponseWriter(w, r.ProtoMajor)
+
 		start := time.Now()
 		h.ServeHTTP(w, r)
 		dur := float64(time.Since(start))
 
-		m.requests.WithLabelValues("status", r.Method, r.URL.Path).Observe(dur)
-	})
+		status := strconv.Itoa(wr.Status())
+
+		m.requests.WithLabelValues(status, r.Method, r.URL.Path).Observe(dur)
+	}
+
+	return http.HandlerFunc(f)
 }
