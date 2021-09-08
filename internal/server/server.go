@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// Config is the config for the server
+// Config is the config for the server.
 type Config struct {
 	Addr string
 	Port string
@@ -17,7 +17,7 @@ type Config struct {
 	Logger *zap.Logger
 }
 
-// Server is our http server
+// Server is our http server.
 type Server struct {
 	addr string
 	port string
@@ -31,7 +31,7 @@ type Handlers struct {
 	Log  *ZapMiddleware
 }
 
-// NewServer will create a new server
+// NewServer will create a new server.
 func NewServer(c Config) Server {
 
 	mux := chi.NewRouter()
@@ -64,7 +64,7 @@ func (h *Handlers) applyRoutes(mux *chi.Mux) {
 	mux.Mount("/debug", middleware.Profiler())
 }
 
-// Run will run our http server
+// Run will run our http server.
 func (s *Server) Run() error {
 	return http.ListenAndServe(s.addr+":"+s.port, s.mux)
 }

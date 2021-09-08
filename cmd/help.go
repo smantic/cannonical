@@ -14,9 +14,9 @@ var FlagStr string = `Flags:
 
 `
 
-var UsageStr string = `cannonical - example template for go apps
+var UsageStr string = `canonical - example template for go apps
 
 Usage: 
-  cannonical [--help] <command> [<args>]
+  canonical [--help] <command> [<args>]
 
 `

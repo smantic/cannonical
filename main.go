@@ -9,7 +9,7 @@ import (
 	"github.com/smantic/cannonical/cmd/serve"
 )
 
-func init() {
+func flags() {
 	// set flags
 
 	flag.Usage = func() {
@@ -19,6 +19,7 @@ func init() {
 
 func main() {
 
+	flags()
 	if len(os.Args) == 1 {
 		fmt.Printf(cmd.HelpStr)
 		return
