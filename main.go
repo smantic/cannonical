@@ -9,26 +9,23 @@ import (
 	"github.com/smantic/cannonical/cmd/serve"
 )
 
-func flags() {
-	// set flags
+func main() {
 
 	flag.Usage = func() {
 		fmt.Printf(cmd.HelpStr)
 	}
-}
 
-func main() {
-
-	flags()
 	if len(os.Args) == 1 {
 		fmt.Printf(cmd.HelpStr)
 		return
 	}
 
 	switch os.Args[1] {
+	// print help message
 	case "help":
 		fmt.Printf(cmd.HelpStr)
 		return
+	// list commands
 	case "list":
 		fmt.Printf(cmd.CommandStr)
 		return

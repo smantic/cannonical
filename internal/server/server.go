@@ -14,6 +14,9 @@ type Config struct {
 	Addr string
 	Port string
 
+	// Debug tell us if we should mount pprof
+	Debug bool
+
 	Logger *zap.Logger
 }
 
@@ -32,7 +35,7 @@ type Handlers struct {
 }
 
 // NewServer will create a new server.
-func NewServer(c Config) Server {
+func NewServer(c *Config) Server {
 
 	mux := chi.NewRouter()
 
@@ -44,14 +47,14 @@ func NewServer(c Config) Server {
 		Log:  &log,
 	}
 
-	h.applyRoutes(mux)
+	h.apply(c, mux)
 
 	return Server{
 		mux: mux,
 	}
 }
 
-func (h *Handlers) applyRoutes(mux *chi.Mux) {
+func (h *Handlers) apply(c *Config, mux *chi.Mux) {
 
 	mux.Use(middleware.Recoverer)
 	mux.Use(h.Prom.RecordRequest)
@@ -60,8 +63,10 @@ func (h *Handlers) applyRoutes(mux *chi.Mux) {
 	mux.Get("/healthz", healthz())
 	mux.Handle("/metrics", promhttp.Handler())
 
-	// mounts pprof
-	mux.Mount("/debug", middleware.Profiler())
+	if c.Debug {
+		// mounts pprof
+		mux.Mount("/debug", middleware.Profiler())
+	}
 }
 
 // Run will run our http server.

@@ -15,12 +15,15 @@ func Run(args []string) {
 	flags := flag.NewFlagSet("serve", flag.ExitOnError)
 	flags.StringVar(&c.Addr, "address", "localhost", "address to run the server on")
 	flags.StringVar(&c.Port, "port", "8080", "port to run the server on")
+
+	flags.BoolVar(&c.Debug, "debug", false, "should pprof be mounted")
+
 	err := flags.Parse(args)
 	if err != nil {
 		log.Printf("failed to parse flags %s\n", err.Error())
 	}
 
-	s := server.NewServer(c)
+	s := server.NewServer(&c)
 
 	log.Printf("http server running on %s:%s...\n", c.Addr, c.Port)
 	err = s.Run()
