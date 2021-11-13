@@ -25,10 +25,6 @@ func main() {
 	case "help":
 		fmt.Printf(cmd.HelpStr)
 		return
-	// list commands
-	case "list":
-		fmt.Printf(cmd.CommandStr)
-		return
 	// serve an http server
 	case "serve":
 		serve.Run(os.Args[2:])

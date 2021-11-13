@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/smantic/cannonical/internal/server"
+	"go.uber.org/zap"
 )
 
 // Run will start the http server.
@@ -22,6 +23,11 @@ func Run(args []string) {
 	if err != nil {
 		log.Printf("failed to parse flags %s\n", err.Error())
 	}
+	logger, err := zap.NewProduction()
+	if err != nil {
+		log.Fatal(err)
+	}
+	c.Logger = logger
 
 	s := server.NewServer(&c)
 

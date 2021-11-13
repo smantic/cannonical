@@ -26,14 +26,16 @@ func (z *ZapMiddleware) LogRequest(h http.Handler) http.Handler {
 		wr := middleware.NewWrapResponseWriter(w, r.ProtoMajor)
 		start := time.Now()
 
-		h.ServeHTTP(w, r)
+		h.ServeHTTP(wr, r)
 
 		dur := time.Since(start)
-		z.logger.With(
+		z.logger.Info(
+			"request-finished",
 			zap.Int("status", wr.Status()),
 			zap.String("method", r.Method),
 			zap.String("path", r.URL.Path),
 			zap.Duration("duration", dur),
+			zap.String("user-agent", r.UserAgent()),
 		)
 	}
 
