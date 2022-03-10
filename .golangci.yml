@@ -54,8 +54,6 @@ linters-settings:
     # Forbid the following identifiers (identifiers are written using regexp):
     forbid:
     - ^print.*$
-    - ^fmt\.Errorf$
-    - fmt\.Print.*
     - ^spew\.Dump$
     - ^gorm\.*$
     exclude_godoc_examples: true
@@ -106,16 +104,6 @@ linters-settings:
     # simplify code: gofmt with `-s` option, true by default
     simplify: true
 
-  goheader:
-    values:
-      const:
-        COMPANY: sezzle
-      regexp:
-        # define here regexp type values, for example
-        AUTHOR: .*@sezzle\.com
-    template: |
-      {{ AUTHOR }} {{ COMPANY }} {{ YEAR }}
-
   goimports:
     # put imports beginning with prefix after 3rd-party packages;
     # it's a comma-separated list of prefixes
@@ -156,7 +144,7 @@ linters-settings:
 
   gosimple:
     # Select the Go version to target. The default is '1.13'.
-    go: '1.15'
+    go: '1.17'
     # https://staticcheck.io/docs/options#checks
     checks: [all]
 
@@ -203,7 +191,6 @@ linters-settings:
     # Setting locale to US will correct the British spelling of 'colour' to 'color'.
     locale: US
     ignore-words:
-    - sezzle
 
   nakedret:
     # make an issue if func has more lines of code than this setting and it has naked returns; default is 30
@@ -248,7 +235,7 @@ linters-settings:
 
   staticcheck:
     # Select the Go version to target. The default is '1.13'.
-    go: '1.15'
+    go: '1.17'
     # https://staticcheck.io/docs/options#checks
     checks: [all]
 
@@ -348,7 +335,6 @@ issues:
   # excluded by default patterns execute `golangci-lint run --help`
   exclude:
   - "Error return value of `[a-zA-Z.]+.Close` is not checked"
-  - "Error return value of `c.Error` is not checked"
 
 
   # Excluding configuration per-path, per-linter, per-text and per-source
@@ -360,6 +346,7 @@ issues:
     - errcheck
     - dupl
     - gosec
+    - lll
 
     # Exclude known linters from partially hard-vendored code,
     # which is impossible to exclude via "nolint" comments.
