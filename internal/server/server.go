@@ -11,6 +11,7 @@ import (
 	middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/smantic/cannonical/internal/routeguide"
 	"github.com/smantic/cannonical/proto"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -40,7 +41,7 @@ func NewServer(c *Config) Server {
 	return Server{
 		Config:           *c,
 		HealthServer:     &HealthChecker{},
-		RouteGuideServer: proto.UnimplementedRouteGuideServer{},
+		RouteGuideServer: &routeguide.RouteGuide{},
 	}
 }
 
