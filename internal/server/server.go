@@ -1,12 +1,13 @@
 package server
 
 import (
-	"net/http"
+	"net"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
+	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
+	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
+	middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2"
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
 )
 
 // Config is the config for the server.
@@ -14,7 +15,7 @@ type Config struct {
 	Addr string
 	Port string
 
-	// Debug tell us if we should mount pprof
+	// Debug tells us if we should mount pprof
 	Debug bool
 
 	Logger *zap.Logger
@@ -22,54 +23,36 @@ type Config struct {
 
 // Server is our http server.
 type Server struct {
-	addr string
-	port string
-
-	mux *chi.Mux
-}
-
-// Handlers contains all of our handlers.
-type Handlers struct {
-	Prom *PromMiddleware
-	Log  *ZapMiddleware
+	Config
 }
 
 // NewServer will create a new server.
 func NewServer(c *Config) Server {
 
-	mux := chi.NewRouter()
-
-	prom := NewPromMiddleware()
-	log := NewZapMiddleware(c.Logger)
-
-	h := Handlers{
-		Prom: &prom,
-		Log:  &log,
-	}
-
-	h.apply(c, mux)
-
 	return Server{
-		mux: mux,
-	}
-}
-
-func (h *Handlers) apply(c *Config, mux *chi.Mux) {
-
-	mux.Use(middleware.Recoverer)
-	mux.Use(h.Prom.RecordRequest)
-	mux.Use(h.Log.LogRequest)
-
-	mux.Get("/healthz", healthz())
-	mux.Handle("/metrics", promhttp.Handler())
-
-	if c.Debug {
-		// mounts pprof
-		mux.Mount("/debug", middleware.Profiler())
+		Config: *c,
 	}
 }
 
 // Run will run our http server.
 func (s *Server) Run() error {
-	return http.ListenAndServe(s.addr+":"+s.port, s.mux)
+
+	lis, err := net.Listen("tcp", s.Port)
+	if err != nil {
+		return err
+	}
+
+	grpc_zap.ReplaceGrpcLoggerV2(s.Logger)
+	g := grpc.NewServer(
+		middleware.WithUnaryServerChain(
+			grpc_ctxtags.UnaryServerInterceptor(grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor)),
+			grpc_zap.UnaryServerInterceptor(s.Logger),
+		),
+		middleware.WithStreamServerChain(
+			grpc_ctxtags.StreamServerInterceptor(grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor)),
+			grpc_zap.StreamServerInterceptor(s.Logger),
+		),
+	)
+
+	return g.Serve(lis)
 }
