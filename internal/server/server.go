@@ -14,6 +14,7 @@ import (
 	"github.com/smantic/cannonical/proto"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 // Config is the config for the server.
@@ -29,15 +30,17 @@ type Config struct {
 type Server struct {
 	Config
 
-	rg     proto.RouteGuideServer
-	health proto.HealthServer
+	proto.RouteGuideServer
+	proto.HealthServer
 }
 
 // NewServer will create a new server.
 func NewServer(c *Config) Server {
 
 	return Server{
-		Config: *c,
+		Config:           *c,
+		HealthServer:     proto.UnimplementedHealthServer{},
+		RouteGuideServer: proto.UnimplementedRouteGuideServer{},
 	}
 }
 
@@ -66,9 +69,10 @@ func (s *Server) Run() error {
 		),
 	)
 
+	reflection.Register(g)
 	grpc_prometheus.Register(g)
-	proto.RegisterHealthServer(g, s.health)
-	proto.RegisterRouteGuideServer(g, s.rg)
+	proto.RegisterHealthServer(g, s.HealthServer)
+	proto.RegisterRouteGuideServer(g, s.RouteGuideServer)
 
 	go func() {
 		http.Handle("/metrics", promhttp.Handler())
