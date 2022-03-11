@@ -11,6 +11,7 @@ import (
 	middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/smantic/cannonical/proto"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
@@ -27,6 +28,9 @@ type Config struct {
 // Server is our http server.
 type Server struct {
 	Config
+
+	rg     proto.RouteGuideServer
+	health proto.HealthServer
 }
 
 // NewServer will create a new server.
@@ -63,6 +67,9 @@ func (s *Server) Run() error {
 	)
 
 	grpc_prometheus.Register(g)
+	proto.RegisterHealthServer(g, s.health)
+	proto.RegisterRouteGuideServer(g, s.rg)
+
 	go func() {
 		http.Handle("/metrics", promhttp.Handler())
 		log.Printf("http server running on :%s...\n", s.DebugPort)
