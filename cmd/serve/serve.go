@@ -16,8 +16,9 @@ func Run(args []string) {
 	flags := flag.NewFlagSet("serve", flag.ExitOnError)
 	flags.StringVar(&c.Addr, "address", "localhost", "address to run the server on")
 	flags.StringVar(&c.Port, "port", "8080", "port to run the server on")
+	flags.StringVar(&c.DebugPort, "debugport", "8081", "port for http server serving prom metrics and pprof to run on")
 
-	flags.BoolVar(&c.Debug, "debug", false, "should pprof be mounted")
+	//flags.BoolVar(&c.Debug, "debug", false, "should pprof be mounted")
 
 	err := flags.Parse(args)
 	if err != nil {
@@ -31,7 +32,7 @@ func Run(args []string) {
 
 	s := server.NewServer(&c)
 
-	log.Printf("http server running on %s:%s...\n", c.Addr, c.Port)
+	log.Printf("grpc server running on %s:%s...\n", c.Addr, c.Port)
 	err = s.Run()
 	if err != nil {
 		log.Printf("failed to run http server: %s\n", err.Error())
