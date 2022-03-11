@@ -39,7 +39,7 @@ func NewServer(c *Config) Server {
 
 	return Server{
 		Config:           *c,
-		HealthServer:     proto.UnimplementedHealthServer{},
+		HealthServer:     &HealthChecker{},
 		RouteGuideServer: proto.UnimplementedRouteGuideServer{},
 	}
 }

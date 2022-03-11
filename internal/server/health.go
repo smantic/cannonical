@@ -6,13 +6,17 @@ import (
 	"github.com/smantic/cannonical/proto"
 )
 
-func (s *Server) Check(context.Context, *proto.HealthCheckRequest) (*proto.HealthCheckResponse, error) {
+type HealthChecker struct {
+	proto.UnimplementedHealthServer
+}
+
+func (h *HealthChecker) Check(context.Context, *proto.HealthCheckRequest) (*proto.HealthCheckResponse, error) {
 	return &proto.HealthCheckResponse{
 		Status: proto.HealthCheckResponse_SERVING,
 	}, nil
 }
 
-func (s *Server) Watch(req *proto.HealthCheckRequest, server proto.Health_WatchServer) error {
+func (h *HealthChecker) Watch(req *proto.HealthCheckRequest, server proto.Health_WatchServer) error {
 	return server.Send(&proto.HealthCheckResponse{
 		Status: proto.HealthCheckResponse_SERVING,
 	})
