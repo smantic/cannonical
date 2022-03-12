@@ -20,3 +20,11 @@ Usage of serve:
 
 
 set up the service with a grpc gateway with https://github.com/grpc-ecosystem/grpc-gateway
+> protoc-gen-grpc-gateway
+
+
+rename the module with: 
+```
+go mod edit -module <NEW_NAME>
+find . -type f -name '*.go' -exec sed -i -e 's,<NEW_NAME>,<OLD_NAME>,g' {} \;
+```
