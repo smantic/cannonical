@@ -1,6 +1,7 @@
 # Cannonical 
 
 Cannoncial is a tempalate for a go grpc server, with structured logging and prom metrics out of the box. 
+A similar http chi server is available on the `chi` branch.
 
 
 Vist https://github.com/smantic/cannonical and click Use this template to use it as a template.
@@ -17,3 +18,5 @@ Usage of serve:
     	port to run the server on (default "8080")
 ```
 
+
+set up the service with a grpc gateway with https://github.com/grpc-ecosystem/grpc-gateway

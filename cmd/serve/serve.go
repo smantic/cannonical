@@ -18,8 +18,6 @@ func Run(args []string) {
 	flags.StringVar(&c.Port, "port", "8080", "port to run the server on")
 	flags.StringVar(&c.DebugPort, "debugport", "8081", "port for http server serving prom metrics and pprof to run on")
 
-	//flags.BoolVar(&c.Debug, "debug", false, "should pprof be mounted")
-
 	err := flags.Parse(args)
 	if err != nil {
 		log.Printf("failed to parse flags %s\n", err.Error())

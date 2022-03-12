@@ -11,7 +11,6 @@ import (
 	middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/smantic/cannonical/internal/routeguide"
 	"github.com/smantic/cannonical/proto"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -31,7 +30,7 @@ type Config struct {
 type Server struct {
 	Config
 
-	proto.RouteGuideServer
+	proto.EchoServer
 	proto.HealthServer
 }
 
@@ -39,9 +38,9 @@ type Server struct {
 func NewServer(c *Config) Server {
 
 	return Server{
-		Config:           *c,
-		HealthServer:     &HealthChecker{},
-		RouteGuideServer: &routeguide.RouteGuide{},
+		Config:       *c,
+		HealthServer: &HealthChecker{},
+		EchoServer:   &EchoServer{},
 	}
 }
 
@@ -73,7 +72,7 @@ func (s *Server) Run() error {
 	reflection.Register(g)
 	grpc_prometheus.Register(g)
 	proto.RegisterHealthServer(g, s.HealthServer)
-	proto.RegisterRouteGuideServer(g, s.RouteGuideServer)
+	proto.RegisterEchoServer(g, s.EchoServer)
 
 	go func() {
 		http.Handle("/metrics", promhttp.Handler())

@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option go_package = "github.com/smantic/cannonical/proto";
+
+ message StringMessage {
+   string value = 1;
+ }
+
+service Echo {
+    rpc Echo(StringMessage) returns (StringMessage){}
+}
+

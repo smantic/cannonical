@@ -14,86 +14,86 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// RouteGuideClient is the client API for RouteGuide service.
+// EchoServiceClient is the client API for EchoService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type RouteGuideClient interface {
-	GetFeature(ctx context.Context, in *Point, opts ...grpc.CallOption) (*Feature, error)
+type EchoServiceClient interface {
+	Echo(ctx context.Context, in *StringMessage, opts ...grpc.CallOption) (*StringMessage, error)
 }
 
-type routeGuideClient struct {
+type echoServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewRouteGuideClient(cc grpc.ClientConnInterface) RouteGuideClient {
-	return &routeGuideClient{cc}
+func NewEchoServiceClient(cc grpc.ClientConnInterface) EchoServiceClient {
+	return &echoServiceClient{cc}
 }
 
-func (c *routeGuideClient) GetFeature(ctx context.Context, in *Point, opts ...grpc.CallOption) (*Feature, error) {
-	out := new(Feature)
-	err := c.cc.Invoke(ctx, "/RouteGuide/GetFeature", in, out, opts...)
+func (c *echoServiceClient) Echo(ctx context.Context, in *StringMessage, opts ...grpc.CallOption) (*StringMessage, error) {
+	out := new(StringMessage)
+	err := c.cc.Invoke(ctx, "/EchoService/Echo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// RouteGuideServer is the server API for RouteGuide service.
-// All implementations must embed UnimplementedRouteGuideServer
+// EchoServiceServer is the server API for EchoService service.
+// All implementations must embed UnimplementedEchoServiceServer
 // for forward compatibility
-type RouteGuideServer interface {
-	GetFeature(context.Context, *Point) (*Feature, error)
-	mustEmbedUnimplementedRouteGuideServer()
+type EchoServiceServer interface {
+	Echo(context.Context, *StringMessage) (*StringMessage, error)
+	mustEmbedUnimplementedEchoServiceServer()
 }
 
-// UnimplementedRouteGuideServer must be embedded to have forward compatible implementations.
-type UnimplementedRouteGuideServer struct {
+// UnimplementedEchoServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedEchoServiceServer struct {
 }
 
-func (UnimplementedRouteGuideServer) GetFeature(context.Context, *Point) (*Feature, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetFeature not implemented")
+func (UnimplementedEchoServiceServer) Echo(context.Context, *StringMessage) (*StringMessage, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Echo not implemented")
 }
-func (UnimplementedRouteGuideServer) mustEmbedUnimplementedRouteGuideServer() {}
+func (UnimplementedEchoServiceServer) mustEmbedUnimplementedEchoServiceServer() {}
 
-// UnsafeRouteGuideServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to RouteGuideServer will
+// UnsafeEchoServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to EchoServiceServer will
 // result in compilation errors.
-type UnsafeRouteGuideServer interface {
-	mustEmbedUnimplementedRouteGuideServer()
+type UnsafeEchoServiceServer interface {
+	mustEmbedUnimplementedEchoServiceServer()
 }
 
-func RegisterRouteGuideServer(s grpc.ServiceRegistrar, srv RouteGuideServer) {
-	s.RegisterService(&RouteGuide_ServiceDesc, srv)
+func RegisterEchoServiceServer(s grpc.ServiceRegistrar, srv EchoServiceServer) {
+	s.RegisterService(&EchoService_ServiceDesc, srv)
 }
 
-func _RouteGuide_GetFeature_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Point)
+func _EchoService_Echo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StringMessage)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RouteGuideServer).GetFeature(ctx, in)
+		return srv.(EchoServiceServer).Echo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/RouteGuide/GetFeature",
+		FullMethod: "/EchoService/Echo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RouteGuideServer).GetFeature(ctx, req.(*Point))
+		return srv.(EchoServiceServer).Echo(ctx, req.(*StringMessage))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// RouteGuide_ServiceDesc is the grpc.ServiceDesc for RouteGuide service.
+// EchoService_ServiceDesc is the grpc.ServiceDesc for EchoService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var RouteGuide_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "RouteGuide",
-	HandlerType: (*RouteGuideServer)(nil),
+var EchoService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "EchoService",
+	HandlerType: (*EchoServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetFeature",
-			Handler:    _RouteGuide_GetFeature_Handler,
+			MethodName: "Echo",
+			Handler:    _EchoService_Echo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
